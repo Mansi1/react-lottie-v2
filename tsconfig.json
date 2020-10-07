@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "module": "esnext",
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "jsx": "react",
+    "moduleResolution": "node",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "baseUrl": "./",
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "noErrorTruncation": false,
+    "allowJs": true,
+    "declaration": true,
+    "noEmit": false,
+    "emitDeclarationOnly": false,
+    "outDir": "dist",
+    "rootDir": "./src",
+    "types": ["node", "react"]
+  },
+  "include": [
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
+}

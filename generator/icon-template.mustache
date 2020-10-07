@@ -1,0 +1,11 @@
+import React from 'react'
+import {IPropsLottieBase} from "../interfaces/IPropsLottieBase";
+import {Lottie} from "../components/Lottie";
+import * as ICON_DATA from './{{className}}.json'
+import {unwrapJsonModule} from "../functions/unwrappJsonModule";
+
+export const {{className}} = (props: IPropsLottieBase) => {
+    return (
+        <Lottie  {...props} animationData={unwrapJsonModule(ICON_DATA)}/>
+    )
+}

@@ -1,0 +1,28 @@
+{
+  "name": "react-lottie-v2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Mansi1/react-lottie-v2.git",
+  "author": "Michael Mannseicher <m.mansi1@gmx.net>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "postbuild": "npx st-cp package.json README.md dist"
+  },
+  "dependencies": {
+    "lottie-web": "^5.7.3"
+  },
+  "peerDependencies": {
+    "react": "15.6.2"
+  },
+  "devDependencies": {
+    "@types/mustache": "^4.0.1",
+    "@types/node": "^14.11.2",
+    "@types/react": "^16.9.50",
+    "mustache": "^4.0.1",
+    "node": "^14.13.0",
+    "react": "15.6.2",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
+  }
+}
