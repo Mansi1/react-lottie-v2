@@ -21,7 +21,8 @@
     "types": ["node", "react"]
   },
   "include": [
-    "src/**/*.tsx"
+    "src/**/*.tsx",
+    "src/**/*.ts"
   ],
   "exclude": [
     "src/**/*.spec.ts",
