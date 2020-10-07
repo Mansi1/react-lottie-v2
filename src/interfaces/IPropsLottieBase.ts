@@ -11,6 +11,7 @@ export interface IPropsLottieBase {
     direction?: AnimationDirection;
     subframe?: boolean;
     style?: CSSProperties;
+    className?: string;
     animationEventListener?: Array<ILottieEvent>
     eventListener?: Array<{ name: string; callback: (args: any) => void }>
 }

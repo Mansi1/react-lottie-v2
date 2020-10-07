@@ -20,6 +20,7 @@ export const Lottie = ({
                            subframe,
                            animationEventListener,
                            eventListener,
+                           className,
                            style,
                            width,
                            height,
@@ -135,6 +136,7 @@ export const Lottie = ({
 
     return (
         <div
+            className={className}
             ref={lottieRenderRef}
             style={combinedStyle}
         />
