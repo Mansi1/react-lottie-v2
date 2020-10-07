@@ -1,6 +1,5 @@
 import React, {CSSProperties, useEffect, useRef, useState,} from 'react';
 import lottie, {AnimationConfigWithData, AnimationItem,} from 'lottie-web';
-import {IAnimationConfig} from "../interfaces/AnimationConfig";
 import {IPropsLottieBase} from "../interfaces/IPropsLottieBase";
 import {getSize} from "../functions/getSize";
 
@@ -38,15 +37,6 @@ export const Lottie = ({
             }
 
             const animation = lottie.loadAnimation(config);
-
-            // loop error https://github.com/airbnb/lottie-web/issues/847
-            if(animationConfig?.loop === false) {
-                animation.addEventListener("enterFrame", function (anim) {
-                    if (anim.currentTime > (animation.totalFrames - 1)) {
-                        animation.pause();
-                    }
-                });
-            }
             setAnimationItem(animation)
         }
         return () => {

@@ -5,6 +5,5 @@ export interface IAnimationConfig {
     autoplay?: boolean;
     initialSegment?: AnimationSegment;
     name?: string;
-    assetsPath?: string;
     rendererSettings?: SVGRendererConfig;
 }
