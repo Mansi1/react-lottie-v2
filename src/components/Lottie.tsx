@@ -31,12 +31,19 @@ export const Lottie = ({
     useEffect(() => {
         if (lottieRenderRef.current && !animationItem) {
             const config: AnimationConfigWithData = {
-                container: lottieRenderRef.current,
-                renderer: 'svg',
-                animationData,
                 ...animationConfig,
+                animationData,
+                container: lottieRenderRef.current,
+                loop: true,
+                renderer: 'svg',
             }
+
             const animation = lottie.loadAnimation(config);
+
+            // loop error https://github.com/airbnb/lottie-web/issues/1217
+            if(animationConfig?.loop === false) {
+                animation.loop = false
+            }
             setAnimationItem(animation)
         }
         return () => {
