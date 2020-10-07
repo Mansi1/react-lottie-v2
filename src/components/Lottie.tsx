@@ -1,4 +1,4 @@
-import React, {CSSProperties, useEffect, useRef, useState,} from 'react';
+import React, {Component, CSSProperties,} from 'react';
 import lottie, {AnimationConfigWithData, AnimationItem,} from 'lottie-web';
 import {IPropsLottieBase} from "../interfaces/IPropsLottieBase";
 import {getSize} from "../functions/getSize";
@@ -8,136 +8,140 @@ export interface PropsLottie extends IPropsLottieBase {
     animationData: any;
 }
 
-export const Lottie = ({
-                           animationData,
-                           animationConfig,
-                           isPaused,
-                           isStopped,
-                           speed,
-                           direction,
-                           subframe,
-                           animationEventListener,
-                           eventListener,
-                           className,
-                           style,
-                           width,
-                           height,
-                       }: PropsLottie) => {
-    const lottieRenderRef = useRef<HTMLDivElement>(null);
-    const [animationItem, setAnimationItem] = useState<AnimationItem>();
-    const [combinedStyle, setCombinedStyle] = useState<CSSProperties>();
+export class Lottie extends Component<PropsLottie> {
 
-    useEffect(() => {
-        if (lottieRenderRef.current && !animationItem) {
-            const config: AnimationConfigWithData = {
-                ...animationConfig,
-                animationData,
-                container: lottieRenderRef.current,
-                renderer: 'svg',
-            }
+    private el: HTMLDivElement | null = null;
+    private animationItem!: AnimationItem;
 
-            const animation = lottie.loadAnimation(config);
-            setAnimationItem(animation)
-        }
-        return () => {
-            if (animationItem) {
-                animationItem.destroy();
-            }
-        }
-    }, [animationConfig, animationData, animationItem, setAnimationItem]);
+    componentDidMount() {
+        this.renderProps(this.props)
+    }
 
-    useEffect(() => {
-        if (animationItem && typeof isPaused !== 'undefined') {
-            if (isPaused && !animationItem.isPaused) {
-                animationItem.pause();
-            } else if (isPaused && animationItem.isPaused) {
-                animationItem.play();
-            }
-        }
-    }, [animationItem, isPaused]);
+    renderProps(props: PropsLottie) {
+        const {
+            animationData,
+            animationConfig,
+        } = props;
 
-    useEffect(() => {
-        if (animationItem && typeof isStopped !== 'undefined') {
-            if (isStopped) {
-                animationItem.stop();
-            }
+        const config: AnimationConfigWithData = {
+            ...animationConfig,
+            animationData,
+            container: this.el as HTMLDivElement,
+            renderer: 'svg',
         }
-    }, [animationItem, isStopped]);
 
-    useEffect(() => {
-        if (animationItem && typeof speed !== 'undefined') {
-            animationItem.setSpeed(speed);
-        }
-    }, [animationItem, speed]);
+        this.animationItem = lottie.loadAnimation(config);
+        this.registerEvents();
+    }
+    componentWillUpdate(nextProps:PropsLottie /* , nextState */) {
+        /* Recreate the animation handle if the data is changed */
+        if (this.props.animationData !== nextProps.animationData) {
+            this.deregisterEvents();
+            this.destroy();
 
-    useEffect(() => {
-        if (animationItem && typeof direction !== 'undefined') {
-            animationItem.setDirection(direction);
+            this.renderProps(nextProps);
         }
-    }, [animationItem, direction]);
+    }
 
-    useEffect(() => {
-        if (animationItem && typeof subframe !== 'undefined') {
-            animationItem.setSubframe(subframe);
-        }
-    }, [animationItem, subframe]);
+    componentWillUnmount() {
+        this.deregisterEvents();
+        this.destroy();
+    }
 
-    useEffect(() => {
-        if (animationItem
-            && typeof animationEventListener !== 'undefined'
-            && Array.isArray(animationEventListener)
-            && animationEventListener.length > 0
-        ) {
-            animationEventListener.forEach((event) => animationItem.addEventListener(event.name, event.callback));
-            return () => {
-                animationEventListener.forEach((event) => animationItem.removeEventListener(event.name, event.callback));
-            }
-        }
-        return () => {
-        }
-    }, [animationItem, animationEventListener]);
+    destroy() {
+        this.animationItem.destroy();
 
-    useEffect(() => {
-        const currentRef = lottieRenderRef.current;
-        if (currentRef
-            && typeof eventListener !== 'undefined'
-            && Array.isArray(eventListener)
-            && eventListener.length > 0
-        ) {
-            eventListener.forEach((event) => currentRef.addEventListener(event.name, event.callback));
-        }
-        return () => {
-            if (currentRef
-                && typeof eventListener !== 'undefined'
-                && Array.isArray(eventListener)
-                && eventListener.length > 0
-            ) {
-                eventListener.forEach((event) => currentRef.removeEventListener(event.name, event.callback));
-            }
-        }
-    }, [animationItem, eventListener]);
+    }
 
-    useEffect(() => {
-        if (animationItem) {
-            let mergedStyle: CSSProperties = {
-                width: getSize(width),
-                height: getSize(height),
-                overflow: 'hidden',
-                margin: '0 auto',
-                outline: 'none',
-            }
-            if (style) {
-                mergedStyle = {...mergedStyle, ...style}
-            }
-            setCombinedStyle(mergedStyle)
+    componentDidUpdate() {
+        this.setSubframe();
+        if (this.props.isStopped) {
+            this.stop();
+        } else {
+            this.play();
         }
-    }, [animationItem, eventListener, height, style, width]);
 
-    return (
-        <div
+        this.pause();
+        this.setSpeed();
+        this.setDirection();
+    }
+
+    setSubframe() {
+        if (typeof this.props.subframe !== 'undefined') {
+            this.animationItem.setSubframe(this.props.subframe)
+        }
+    }
+
+    setSpeed() {
+        if (typeof this.props.speed !== 'undefined'
+            && this.animationItem.playSpeed !== this.props.speed) {
+            this.animationItem.setSpeed(this.props.speed);
+        }
+    }
+
+    setDirection() {
+        if (typeof this.props.direction !== 'undefined'
+            && this.animationItem.playDirection !== this.props.direction) {
+            this.animationItem.setDirection(this.props.direction);
+        }
+    }
+
+    stop() {
+        this.animationItem.stop()
+    }
+
+    play() {
+        this.animationItem.play()
+    }
+
+    pause() {
+        if (this.props.isPaused && !this.animationItem.isPaused) {
+            this.animationItem.pause();
+        } else if (!this.props.isPaused && this.animationItem.isPaused) {
+            this.animationItem.pause();
+        }
+    }
+
+
+    registerEvents() {
+        this.props.animationEventListener?.forEach((event) =>
+            this.animationItem.addEventListener(event.name, event.callback)
+        );
+        this.props.eventListener?.forEach((event) =>
+            (this.el as HTMLDivElement).addEventListener(event.name, event.callback)
+        );
+    }
+
+    deregisterEvents() {
+        this.props.animationEventListener?.forEach(
+            (event) =>
+                this.animationItem.removeEventListener(event.name, event.callback)
+        );
+        this.props.eventListener?.forEach((event) =>
+            (this.el as HTMLDivElement).removeEventListener(event.name, event.callback)
+        );
+    }
+
+    render() {
+        const {width, height, style, className} = this.props;
+        let combinedStyle: CSSProperties = {
+            width: getSize(width),
+            height: getSize(height),
+            overflow: 'hidden',
+            margin: '0 auto',
+            outline: 'none',
+        }
+        if (style) {
+            combinedStyle = {...combinedStyle, ...style}
+        }
+        return <div
             className={className}
-            ref={lottieRenderRef}
+            ref={(c) => {
+                this.el = c;
+            }}
             style={combinedStyle}
-        />
-    )
+        />;
+    }
+
+
 }
