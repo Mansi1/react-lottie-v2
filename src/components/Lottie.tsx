@@ -34,15 +34,18 @@ export const Lottie = ({
                 ...animationConfig,
                 animationData,
                 container: lottieRenderRef.current,
-                loop: true,
                 renderer: 'svg',
             }
 
             const animation = lottie.loadAnimation(config);
 
-            // loop error https://github.com/airbnb/lottie-web/issues/1217
+            // loop error https://github.com/airbnb/lottie-web/issues/847
             if(animationConfig?.loop === false) {
-                animation.loop = false
+                animation.addEventListener("enterFrame", function (anim) {
+                    if (anim.currentTime > (animation.totalFrames - 1)) {
+                        animation.pause();
+                    }
+                });
             }
             setAnimationItem(animation)
         }
