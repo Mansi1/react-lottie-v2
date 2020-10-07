@@ -1,6 +1,7 @@
 import {AnimationDirection} from "lottie-web";
 import {CSSProperties} from 'react';
 import {ILottieEvent} from "./ILottieEvent";
+import {IAnimationConfig} from "./AnimationConfig";
 
 export interface IPropsLottieBase {
     isStopped?: boolean;
@@ -14,4 +15,5 @@ export interface IPropsLottieBase {
     className?: string;
     animationEventListener?: Array<ILottieEvent>
     eventListener?: Array<{ name: string; callback: (args: any) => void }>
+    animationConfig?: IAnimationConfig;
 }

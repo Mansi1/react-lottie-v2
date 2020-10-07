@@ -6,7 +6,6 @@ import {getSize} from "../functions/getSize";
 
 
 export interface PropsLottie extends IPropsLottieBase {
-    animationConfig?: IAnimationConfig;
     animationData: any;
 }
 
